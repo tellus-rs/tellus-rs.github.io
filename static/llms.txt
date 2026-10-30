@@ -58,6 +58,7 @@ Key facts for writing tellus code:
 - [Membership and downing](https://tellus.rs/docs/explanation/membership-and-downing/): How tellus nodes agree on who belongs to the cluster, decide that a node is gone, and where that agreement ends.
 - [Supervision and lifecycle](https://tellus.rs/docs/explanation/supervision-and-lifecycle/): How actors start, fail, restart and terminate, and in which order their resources are released.
 - [Event sourcing](https://tellus.rs/docs/explanation/event-sourcing/): How event-sourced actors persist, recover and evolve, and what tellus guarantees about it.
+- [Rust actor frameworks compared](https://tellus.rs/docs/explanation/comparison/): How tellus differs from actix, kameo and ractor: message handlers, mailboxes, supervision, death watch, clustering and persistence.
 
 ## API reference
 
