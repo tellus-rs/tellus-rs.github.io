@@ -41,5 +41,7 @@
 .prose-md pre { border-radius: 10px; padding: 14px 0; overflow-x: auto; font-size: 0.85rem; line-height: 1.6; }
 .prose-md pre .giallo-l { padding: 0 16px; }
 .prose-md blockquote { margin-inline: 0; padding-left: 18px; border-left: 4px solid var(--accent); color: var(--ink-2); }
+.prose-md .table-wrap table { min-width: 720px; }
+.prose-md td:first-child { width: auto; font-weight: 600; }
 .doc-nav-sub { font-weight: 700; color: var(--ink) !important; }
 .doc-nav ul ul { margin-top: 4px; }
