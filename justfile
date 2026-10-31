@@ -1,7 +1,7 @@
 set shell := ["bash", "-uc"]
 
 serve:
-    zola serve --open
+    zola serve --interface 0.0.0.0 --base-url /
 
 build:
     zola build
