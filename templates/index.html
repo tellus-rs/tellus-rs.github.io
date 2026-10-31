@@ -219,6 +219,8 @@
         </div>
         <a class="more" href="{{ config.extra.comparison }}">See the results on the comparison dashboard →</a>
         <p>Speed is one difference among many. <a href="{{ get_url(path='@/docs/explanation/comparison.md') }}">Rust actor frameworks compared</a> sets tellus next to actix, kameo and ractor, feature by feature.</p>
+        <p>We also watch our own hot path. <a href="https://hotpath.rs">hotpath</a> profiles every pull request against <code>main</code>, comparing instruction counts and allocations per function, and its check fails when sending a message or replaying events starts to allocate.</p>
+        <a class="more" href="{{ config.extra.hotpath }}">See the history on hotpath.rs →</a>
       </div>
       <ol class="rules">
         <li><span><b>One run, one machine, back to back.</b> Numbers are only compared within a single run.</span></li>

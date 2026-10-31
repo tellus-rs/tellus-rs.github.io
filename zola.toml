@@ -29,6 +29,7 @@ docs_rs  = "https://docs.rs/tellus/latest/tellus/"
 crates   = "https://crates.io/crates/tellus"
 internals = "https://github.com/tellus-rs/tellus/tree/main/docs"
 comparison = "https://tellus.rs/tellus/comparison/"
+hotpath = "https://hotpath.rs/app/repos/tellus-rs/tellus"
 plausible = "https://plausible.io/js/pa-vbP61NY2WY8Ulnud_Qb6z.js"
 
 [extra.articles]
