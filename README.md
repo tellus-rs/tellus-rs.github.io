@@ -9,7 +9,7 @@ You need Zola 0.23 or later and [just](https://just.systems).
 
 ```shell
 git clone --recurse-submodules git@github.com:tellus-rs/tellus-rs.github.io.git
-just serve   # serve locally with live reload
+just serve   # serve with live reload on all interfaces, port 1111
 just all     # check links and build into public/
 ```
 
