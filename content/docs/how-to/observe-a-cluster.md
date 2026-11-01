@@ -77,9 +77,10 @@ cargo run --quiet -p tellus-cluster-inspect --example how_to_serve_cluster_state
 
 `GET /inspect/cluster` answers a snapshot as JSON: the `ClusterState`, the endpoint's lifecycle
 (`unformed`, `formed` or `downed`) and the receptionist's settlement. `GET /inspect/events` streams
-every change as server-sent events, starting with a `hello` and the current state. A client that
-reconnects with the `Last-Event-ID` it saw last continues right after it, as long as the node still
-keeps that position.
+every change as server-sent events. A new client gets a `hello`, then the changes the node still
+keeps, oldest first, and then the current state and verdict. A client that reconnects with the
+`Last-Event-ID` it saw last continues right after it, as long as the node still keeps that
+position.
 
 ```sh
 curl localhost:8080/inspect/cluster

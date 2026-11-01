@@ -28,9 +28,9 @@ A full mailbox still takes two kinds of messages the actor asked for itself: the
 enqueues it past the capacity. It still counts against the capacity, so ordinary messages are
 dropped until the actor has worked its mailbox back under it.
 
-At least once would need acknowledgements and redelivery, and with them deduplication in every
+At least once would need acknowledgments and redelivery, and with them deduplication in every
 receiver. tellus leaves that to the protocols which need it, built from messages. `ask` provides
-the acknowledgement part: the caller learns whether a reply came. Redelivery is up to the caller.
+the acknowledgment part: the caller learns whether a reply came. Redelivery is up to the caller.
 
 ## In order per sender
 

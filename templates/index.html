@@ -74,7 +74,7 @@
           <h2>Know when an actor is gone, and know you have heard everything it said.</h2>
           <p class="claim">Receiving <code>Terminated</code> proves you have seen every message that actor will ever deliver to you.</p>
           <p>Watch any actor with <code>context.watch(&amp;actor)</code>. When it terminates, you get a signal in your ordinary mailbox, ordered behind every message the actor delivered to you. Each of its messages arrived before the signal or was dropped as a dead letter.</p>
-          <p>So you can gather results from workers without counting replies, timeouts or extra acknowledgements: when the last worker's signal arrives, you have every result the workers delivered. And <code>unwatch</code> means what it says, even if the signal is already waiting in your mailbox.</p>
+          <p>So you can gather results from workers without counting replies, timeouts or extra acknowledgments: when the last worker's signal arrives, you have every result the workers delivered. And <code>unwatch</code> means what it says, even if the signal is already waiting in your mailbox.</p>
           <a class="more" href="{{ get_url(path="@/docs/explanation/death-watch-ordering.md") }}">How the ordering guarantee works →</a>
         </div>
         <div>

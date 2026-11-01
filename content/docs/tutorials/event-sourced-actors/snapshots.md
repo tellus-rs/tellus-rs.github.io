@@ -17,8 +17,9 @@ snapshot type, so it is `Versioned` like an event.
 
 {{<example path="tellus/examples/tutorials/event_sourced/03_snapshots.rs" anchor="apply"/>}}
 
-After the events of an effect have been applied, tellus asks `snapshot` whether one is due. The
-device offers one after every third reading.
+Once the events of an effect have been applied and its continuations have run, tellus asks
+`snapshot` whether one is due. An effect without events, like the one for `Read`, is never followed
+by a snapshot. The device offers one after every third reading.
 
 {{<example path="tellus/examples/tutorials/event_sourced/03_snapshots.rs" anchor="init"/>}}
 
