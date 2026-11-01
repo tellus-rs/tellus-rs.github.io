@@ -44,16 +44,18 @@ manager up there:
 
 {{<example path="tellus/examples/tutorials/clustered/02_remotable_messages.rs" anchor="lookup-manager"/>}}
 
-`lookup_at` answers from the registrations replicated to this node, without asking the other node.
-Right after bootstrap it answers empty, because the registration has not arrived yet. So
-`lookup_manager` retries, bounded by one timeout.
+`lookup_at` answers from the registrations replicated to this node, without asking the other
+node. Right after bootstrap it can still answer empty, because the registration may not have
+arrived yet. So `lookup_manager` retries, bounded by one timeout.
 
 ## The first node
 
 {{<example path="tellus/examples/tutorials/clustered/02_remotable_messages.rs" anchor="first-node"/>}}
 
-Apart from the lookup, this is the `main` of the getting started tutorial. The device manager is
-on another node now, but `tell` and `ask` are the same.
+`first_node` picks the addresses of both nodes, starts the device manager's node and joins the
+cluster, then looks the device manager up. It needs no actor system of its own, since the device
+manager is a remote reference now. The readings and the questions are those of the getting started
+tutorial's `main`, with the same `tell` and `ask`.
 
 ## Run it
 

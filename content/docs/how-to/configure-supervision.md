@@ -22,11 +22,12 @@ The keys are the fields of `ActorConfig`:
 
 - `mailbox_capacity` is `"unbounded"` (the default) or `{ bounded = n }` with `n` of at least 1.
 - `supervision_strategy` is `"stop"` (the default) or a `restart` table.
-- `max_restarts` is the only required key of `restart`. The others default to the values shown.
-  The backoff grows from 250 ms to at most 4 s. The restart count resets once the actor has run
-  for 30 s without failing. A `backoff` table needs both `min` and `max`.
+- `max_restarts` is the only required key of `restart`, and it is at least 1. The others default to
+  the values shown. The backoff grows from 250 ms to at most 4 s. The restart count resets once the
+  actor has run for 30 s without failing. A `backoff` table needs both `min` and `max`.
 
-Durations use the [humantime](https://docs.rs/humantime) format, for example `"250ms"`, `"4s"` or `"1m"`.
+Durations use the [humantime](https://docs.rs/humantime) format, for example `"250ms"`, `"4s"` or
+`"1m"`.
 
 ## Load it
 
@@ -40,14 +41,14 @@ it once and use it for many actors.
 
 Invalid configuration fails while loading, not when an actor fails for the first time. An unknown
 key is an error, so a typo does not silently fall back to a default. A backoff whose minimum is
-above its maximum is an error, too:
+zero or above its maximum is an error, too:
 
 {{<example path="tellus/examples/how_to/configure_supervision.rs" anchor="invalid"/>}}
 
 {{<example path="tellus/examples/how_to/configure_supervision.rs" anchor="error"/>}}
 
-The error names the table with the offending key. In your application, return it from `main` instead of printing
-it, so a misconfigured service does not start.
+The error names the table with the offending key. In your application, return it from `main`
+instead of printing it, so a misconfigured service does not start.
 
 ## Run it
 

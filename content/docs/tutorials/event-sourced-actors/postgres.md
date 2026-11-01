@@ -36,7 +36,13 @@ Readings so far: 1
 Readings so far: 2
 ```
 
-`docker compose down -v postgres` stops the database and resets the readings.
+The `postgres` service of the repository's `docker-compose.yaml` listens on port 5432, which must
+be free. The example connects to `postgres://tellus:tellus@localhost:5432/tellus` unless the
+environment variable `DATABASE_URL` names another database. The counts start at 1 only if the
+database holds no events of this device yet, as after the first start of the service.
+
+`docker compose down -v postgres` stops the database and deletes its volume, which resets the
+readings.
 
 ## What you learned
 

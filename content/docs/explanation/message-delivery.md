@@ -26,7 +26,8 @@ A full mailbox still takes two kinds of messages the actor asked for itself: the
 `ReplyTo` it created with `context.reply_to`, and the output of a future it piped with
 `pipe_to_self`. An actor which waits for one would wait forever if it were dropped, so tellus
 enqueues it past the capacity. It still counts against the capacity, so ordinary messages are
-dropped until the actor has worked its mailbox back under it.
+dropped until the actor has worked its mailbox back under it. A `Host` enqueues the messages it
+buffered while passivating an entity the same way, into the entity's next incarnation.
 
 At least once would need acknowledgments and redelivery, and with them deduplication in every
 receiver. tellus leaves that to the protocols which need it, built from messages. `ask` provides

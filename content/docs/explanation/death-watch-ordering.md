@@ -4,9 +4,9 @@ description = "Why receiving Terminated proves that you have seen every message 
 weight      = 4
 +++
 
-An actor can watch another actor and then gets a signal once that actor has terminated. tellus adds a
-guarantee to that signal: it arrives behind every message the terminated actor delivered to the
-watcher. This page explains what the guarantee says, why it holds and what you can build on it.
+An actor can watch another actor and then gets a signal once that actor has terminated. tellus
+adds a guarantee to that signal: it arrives behind every message the terminated actor delivered to
+the watcher. This page explains what the guarantee says, why it holds and what you can build on it.
 
 ## Watching
 
@@ -54,7 +54,7 @@ message comes before `Terminated`. In the [tutorial](@/docs/tutorials/getting-st
 retiring devices hand over their last reading this way.
 
 **Registries.** A parent that keeps its children in a map can watch them and remove an entry on
-`Terminated`. Since nothing from that child can arrive afterwards, no message ever comes from a
+`Terminated`. Since nothing from that child can arrive afterward, no message ever comes from a
 child that is no longer in the map.
 
 ## Unwatching
@@ -78,15 +78,15 @@ A node that crashes or is cut off cannot report anything. Once the cluster has d
 see [Membership and downing](@/docs/explanation/membership-and-downing.md), the watcher gets a
 synthesized signal instead. That signal promises less: the actor may still be running on the other
 side of a partition, and its destructors may never run. It guarantees one thing, by construction:
-no message from that actor is ever delivered on this node again. That is still enough for what the
+no message from that actor is delivered on this node again. That is still enough for what the
 guarantee is used for, such as a query that stops waiting for an answer that cannot come anymore.
 
 Two more cases fire a synthesized signal without a downing, and they do not carry even that
-promise. In the first, the watch cannot be sent: towards an address tellus refuses, towards a
+promise. In the first, the watch cannot be sent: toward an address tellus refuses, toward a
 connection bound to another incarnation, or while this node is downed or leaving. In the second,
 tellus gives up connecting to an address that no member advertises, and signals every actor watched
 there. Neither case marks the watched node down, so a message from the actor may still arrive
-afterwards. The API does not tell these signals apart from the others.
+afterward. The API does not tell these signals apart from the others.
 
 Unwatching stays absolute across nodes, and watching stays race-free: watching an actor that has
 already terminated, or one on a node that is already down, signals right away.

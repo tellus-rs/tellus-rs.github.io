@@ -1,7 +1,7 @@
 +++
 title       = "Supervision and lifecycle"
 description = "How actors start, fail, restart and terminate, and in which order their resources are released."
-weight      = 6
+weight      = 5
 +++
 
 Every actor runs through the same lifecycle: it starts with `init`, handles messages with
@@ -32,7 +32,7 @@ terminates, from the [watching step](@/docs/tutorials/getting-started/watch.md) 
 
 The mailbox survives. Messages which arrived behind the failing message, or arrive during the
 backoff, are handled by the restarted actor. The failing message itself is not delivered again.
-Watches survive, too.
+Watches survive, too. Timers do not: a restart cancels all of the actor's timers.
 
 ## Restarts are limited
 
@@ -43,9 +43,10 @@ watchers learn about it. The count resets once the actor has run for `reset_afte
 failing.
 
 The backoff delay doubles with every consecutive restart, from the backoff's minimum up to its
-maximum. By default the backoff grows from 250 ms to 4 s, and `reset_after` is 30 s. A failing dependency, for example a database which is down, is then retried less and
-less often instead of in a tight loop. A failing `init` counts like a failing `receive`, including
-the very first one at spawn.
+maximum. By default the backoff grows from 250 ms to 4 s, and `reset_after` is 30 s. A failing
+dependency, for example a database which is down, is then retried less and less often instead of
+in a tight loop. A failing `init` counts like a failing `receive`, including the very first one at
+spawn.
 
 ## Stopping
 
@@ -73,4 +74,5 @@ while the children may still be running.
 ## Configuration
 
 The supervision strategy and the mailbox capacity form an actor's `ActorConfig`. It is set in code
-or loaded from a file, as shown in [Configure an actor from a file](@/docs/how-to/configure-supervision.md).
+or loaded from a file, as shown in
+[Configure an actor from a file](@/docs/how-to/configure-supervision.md).

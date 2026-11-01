@@ -15,7 +15,7 @@ finds the device manager by its key alone.
 `receptionist::subscribe` returns a `Subscription` to every actor registered under the key, on any
 member. `current` resolves the set as of now into references, and `changed` waits until it has
 changed since the last `current`. So instead of polling, `find_manager` waits for the next
-registration, unregistration or change of membership.
+registration, the termination of a registered actor or a change of membership.
 
 The set only holds actors on members that are up. A registration disappears when its actor
 terminates or its node is gone, so a subscription also tells you when an actor you found is no

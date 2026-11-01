@@ -6,8 +6,8 @@ weight      = 8
 
 Rust has several actor frameworks. This page compares tellus with three widely used ones:
 [actix](https://crates.io/crates/actix), [kameo](https://crates.io/crates/kameo) and
-[ractor](https://crates.io/crates/ractor). It describes tellus 0.5.1, actix 0.13.5, kameo 0.22.2
-and ractor 0.16.5, as of October 2026. The facts about the other three come from their own
+[ractor](https://crates.io/crates/ractor). It describes tellus 0.5.2, and actix 0.13.5, kameo
+0.22.2 and ractor 0.16.5 as of October 2026. The facts about the other three come from their own
 documentation and source code.
 
 The maintainers of tellus wrote this page, so read it with that in mind. If something about
@@ -70,10 +70,10 @@ In actix and kameo, an actor implements a handler trait once per message type: `
 ## Mailboxes
 
 kameo bounds a mailbox to 64 messages by default, to apply backpressure: a sender which awaits its
-send waits for space. actix bounds a mailbox to 16 messages by default, and a capacity of 0 makes it
-unbounded. Its `send` returns a future which waits for space, while `do_send` ignores the limit. ractor's mailboxes are always unbounded.
-Only its factories, which distribute work across a pool of workers, can bound their queue and
-discard messages beyond it.
+send waits for space. actix bounds a mailbox to 16 messages by default, and a capacity of 0 makes
+it unbounded. Its `send` returns a future which waits for space, while `do_send` ignores the limit.
+ractor's mailboxes are always unbounded. Only its factories, which distribute work across a pool of
+workers, can bound their queue and discard messages beyond it.
 
 A tellus mailbox is unbounded by default. A bounded one never makes the sender wait: `tell` drops a
 message which does not fit and logs it as a dead letter. Replies the actor asked for, the outputs

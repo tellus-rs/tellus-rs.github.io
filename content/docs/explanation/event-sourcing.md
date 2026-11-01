@@ -1,7 +1,7 @@
 +++
 title       = "Event sourcing"
 description = "How event-sourced actors persist, recover and evolve, and what tellus guarantees about it."
-weight      = 7
+weight      = 6
 +++
 
 An event-sourced actor stores what happened to it, not what its state is. Its state is the result
@@ -26,7 +26,8 @@ memory therefore never contains anything the store does not have. All events of 
 appended atomically: after a crash the store contains all of them or none.
 
 Writes are strict. A command is settled, with its events stored and applied and its continuation
-run, before the actor takes the next message from its mailbox. Ordering per sender carries over from plain actors.
+run, before the actor takes the next message from its mailbox. Ordering per sender carries over
+from plain actors.
 
 ## Continuations run at most once
 

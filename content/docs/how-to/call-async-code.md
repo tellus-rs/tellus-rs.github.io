@@ -45,7 +45,8 @@ future, so you pipe it the same way:
 
 {{<example path="tellus/examples/how_to/call_async_code.rs" anchor="checksum"/>}}
 
-The output is a `Result<u64, JoinError>`. It is an error if, for example, the blocking closure panicked.
+The output is a `Result<u64, JoinError>`. It is an error if, for example, the blocking closure
+panicked.
 
 ## What to keep in mind
 

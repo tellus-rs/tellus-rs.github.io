@@ -4,8 +4,8 @@ description = "Stop a device manager on request and let its node leave the clust
 weight      = 5
 +++
 
-Most nodes do not crash, they are stopped: for a deployment, a scale down or a restart. A node that
-stops on purpose can tell the cluster so, which spares everyone the failure detection of the
+Most nodes do not crash. They are stopped, for a deployment, a scale down or a restart. A node
+that stops on purpose can tell the cluster so, which spares everyone the failure detection of the
 previous step. In this step the device manager stops on request, and its node leaves the cluster.
 
 ## Stopping the device manager
@@ -22,13 +22,14 @@ system, so the actor system terminates with it.
 {{<example path="tellus/examples/tutorials/clustered/05_leave.rs" anchor="manager-node"/>}}
 
 `leave_on_terminated` waits until the actor system has terminated and then leaves. The node
-announces its departure to every member and tries to drain what it still has queued for them, within
-its `leave_timeout`. A member acknowledges once those frames have reached its delivery path, a
-mailbox or a logged dead letter; that does not prove an actor has handled them. The call returns a
-`Departure`, which lists the members that acknowledged and those that did not, for example because
-their connection ended first or the timeout passed. tellus logs a warning for every member that did
-not acknowledge. Leaving is final, like being downed: the process exits, and only a restart joins
-again, as a new node.
+announces its departure to every member and tries to drain what it still has queued for them,
+within its `leave_timeout`. A member acknowledges once those frames have reached its delivery path,
+a mailbox or a logged dead letter. That does not prove an actor has handled them. The call returns
+a `Departure`, which lists the members that acknowledged and those that did not. A member may not
+acknowledge, for example, because its connection ended first or the timeout passed. tellus logs a
+warning for every member that did not acknowledge. Leaving is final, like being downed: the node
+sends and admits nothing afterward. tellus does not end the process, so `manager_node` returns and
+the program exits. Only a restarted process joins again, as a new node.
 
 ## Watching a departure
 
@@ -43,7 +44,7 @@ again, as a new node.
 The first node spawns the watcher before it records the readings, so the watch is on its way long
 before anything stops. Instead of killing the second node, it then tells the device manager to
 stop. It waits for the watcher, then for the second node to be listed as left, and for its process
-to exit.
+to exit. Finally, it finds the remaining device manager and asks it for the average again.
 
 ## Run it
 
@@ -68,11 +69,12 @@ step needs no faster configuration than the defaults.
 ## A real termination
 
 This time the terminated signal is normally real. The device manager's node sends it over the wire
-as part of the device manager's termination, so it arrives behind every message the device manager
-sent the watcher, exactly as within one process. The watcher gets a synthesized signal instead, as
-in the previous step, if the device manager is already gone when the watch arrives, or if the first
-node cannot finish reading what the second node sent before its leave timeout. The API does not
-tell the two apart, and tellus offers no way to wait until a remote watch is in place.
+as part of the device manager's termination. So it arrives behind every message the device manager
+sent the watcher, exactly as within one process. In two cases the watcher gets a synthesized
+signal instead, as in the previous step. One is a device manager which is already gone when the
+watch arrives. The other is a first node which cannot finish reading what the second node sent
+before its leave timeout. The API does not tell the two apart, and tellus offers no way to wait
+until a remote watch is in place.
 
 ## What you learned
 
@@ -83,8 +85,8 @@ terminations.
 
 ## Where to go from here
 
-You have spread the device manager over a cluster: the nodes bootstrap from a list of seeds,
-messages and references cross the wire, the receptionist finds actors by key, and the cluster
+You have spread the device manager over a cluster. The nodes bootstrap from a list of seeds, and
+messages and references cross the wire. The receptionist finds actors by key, and the cluster
 handles both ways out of it, a crash and a departure.
 
 For production, the how-to guides show how to
@@ -93,6 +95,7 @@ For production, the how-to guides show how to
 [observe a cluster](@/docs/how-to/observe-a-cluster.md) and
 [secure it with mutual TLS](@/docs/how-to/secure-with-mutual-tls.md).
 [Membership and downing](@/docs/explanation/membership-and-downing.md) explains how the nodes agree
-on who belongs to the cluster, and [Message delivery](@/docs/explanation/message-delivery.md#across-nodes)
-and [the death watch ordering guarantee](@/docs/explanation/death-watch-ordering.md#across-nodes)
-what holds across nodes.
+on who belongs to the cluster, and
+[Message delivery](@/docs/explanation/message-delivery.md#across-nodes) and
+[the death watch ordering guarantee](@/docs/explanation/death-watch-ordering.md#across-nodes) what
+holds across nodes.

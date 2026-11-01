@@ -5,10 +5,9 @@ weight      = 0
 +++
 
 The actor model is a model of concurrent computation, introduced by Carl Hewitt and colleagues in
-1973. tellus
-implements it for Rust, on top of Tokio. This page explains the model itself, shows where its
-parts appear in tellus, and discusses when actors are the right tool. The other explanation pages
-build on it.
+1973. tellus implements it for Rust, on top of Tokio. This page explains the model itself, shows
+where its parts appear in tellus, and discusses when actors are the right tool. The other
+explanation pages build on it.
 
 ## Actors, messages and addresses
 

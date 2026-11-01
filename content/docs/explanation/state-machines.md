@@ -13,7 +13,7 @@ state is not simply a field of the actor.
 
 `receive` takes the current state by value and returns the next one inside
 `Control::Continue`. The state before the call is consumed, and only the returned state exists
-afterwards. `init` produces the first state, and `Control::Stop` ends the machine.
+afterward. `init` produces the first state, and `Control::Stop` ends the machine.
 
 Consider a device which ignores readings until it is calibrated. Its state is an enum with one
 variant per state of the machine:

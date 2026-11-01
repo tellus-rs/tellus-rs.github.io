@@ -6,19 +6,19 @@ weight      = 4
 
 Nodes crash. In this step two nodes run a device manager each, the first node watches the one it
 uses, and that one's node is killed. The cluster has to notice that the node is gone and agree to
-remove it, and the watch tells the first node when it has.
+down it, and the watch tells the first node when it has.
 
 ## Why three nodes
 
 When a node falls silent, the others cannot tell whether it crashed or whether only the network
 between them failed. So the cluster does not decide by who is silent, but by who is in the
-majority: the `KeepMajority` downing provider, the default, keeps the side that sees a strict
-majority of the members and removes the others. In a cluster of two, every failure is an even
-split. `KeepMajority` gives it to the lower address, so the lower node survives a failure of the
-higher one, but when the lower one is killed, the survivor removes itself. Two nodes cannot
-guarantee surviving either node's failure, so this step runs three: the first node and two device
-manager nodes. Whichever of them is killed, the other two are a majority. For the downing rules in
-full, see [Membership and downing](@/docs/explanation/membership-and-downing.md).
+majority. The `KeepMajority` downing provider, the default, keeps the side that sees a strict
+majority of the members and downs the others. In a cluster of two, every failure is an even split.
+`KeepMajority` gives it to the lower address, so the lower node survives a failure of the higher
+one, but when the lower one is killed, the survivor downs itself. Two nodes cannot guarantee
+surviving either node's failure, so this step runs three: the first node and two device manager
+nodes. Whichever of them is killed, the other two are a majority. For the downing rules in full,
+see [Membership and downing](@/docs/explanation/membership-and-downing.md).
 
 A majority only means something if all nodes count the same members. So before anything is
 killed, all three have to agree on the membership.
@@ -96,6 +96,6 @@ that is what the first node needs to stop relying on it.
 ## What you learned
 
 A cluster that must survive a failure needs at least three nodes that agree on the membership.
-The failure detector and the downing provider turn a node's silence into its removal, and a watch
+The failure detector and the downing provider turn a node's silence into its downing, and a watch
 on an actor of that node then fires with a synthesized signal. Next, a node leaves the cluster on
 its own instead of being killed.
