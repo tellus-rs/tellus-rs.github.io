@@ -25,9 +25,9 @@ fails, the events are not applied, and the actor fails into its supervision stra
 memory therefore never contains anything the store does not have. All events of one effect are
 appended atomically: after a crash the store contains all of them or none.
 
-Writes are strict. A command is settled, with its events stored and applied and its continuation
-run, before the actor takes the next message from its mailbox. Ordering per sender carries over
-from plain actors.
+Writes are strict. A command is settled, with its events stored and applied, its continuation run
+and the save of a due snapshot attempted, before the actor takes the next message from its mailbox.
+Ordering per sender carries over from plain actors.
 
 ## Continuations run at most once
 
