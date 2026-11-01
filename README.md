@@ -30,7 +30,8 @@ line removed from every line:
 relative to the site root and a title, which the landing page uses.
 
 The submodule is pinned to the latest tellus release, so the docs match the crate on crates.io.
-The version on the landing page is read from the submodule.
+The version on the landing page is read from the submodule. So is the release tag which
+`{{<tellus_tag/>}}` renders, for example in `git clone --branch {{<tellus_tag/>}}`.
 
 A daily workflow (`pin-tellus.yml`) notices a new `tellus-v*` tag and pins it on the branch
 `pin/<tag>`. It then opens a draft pull request listing every tellus change since the last pin. It
@@ -44,8 +45,8 @@ To pin by hand, without the pull request:
 just pin-tellus tellus-v0.4.0
 ```
 
-The few landing page snippets which are not in tellus yet live in `snippets/`; see
-[its README](snippets/README.md) for where each of them should eventually come from.
+The landing page shows one snippet which does not come from tellus: the `cargo add` commands in
+`snippets/install.sh`, see [its README](snippets/README.md).
 
 ## Styles
 

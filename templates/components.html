@@ -28,6 +28,11 @@
 {{<code path={"tellus/" ~ path} lang="rust" title={path} anchor={anchor}/>}}
 {% endcomponent example %}
 
+{% component tellus_tag() %}
+{%- set manifest = load_data(path="tellus/tellus/Cargo.toml", format="toml") -%}
+tellus-v{{ manifest.package.version }}
+{%- endcomponent tellus_tag %}
+
 {% component articles(url: string, tag: string, timezone: string, tag_url: string) %}
 {%- set feed = load_data(url=url, format="xml", required=false) -%}
 <section class="stratum" id="articles">

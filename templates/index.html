@@ -25,7 +25,7 @@
       <div>
         <div class="eyebrow"><span class="pill">{{ tellus_manifest.package.version }}</span> actor framework for Rust <span aria-hidden="true">·</span> built on Tokio <span aria-hidden="true">·</span> Apache 2.0</div>
         <h1>Actors for Rust, on <span class="ground">solid ground.</span></h1>
-        <p class="lede">tellus gives you typed actors as state machines, supervision trees and a death watch you can reason about. Add event sourcing and a cluster when you need them, through the same API.</p>
+        <p class="lede">tellus gives you typed actors as state machines, supervision trees and a death watch you can reason about. Add event sourcing and a cluster when you need them.</p>
         <div class="cta">
           <div class="install" id="install"><span class="prompt">$</span><span id="install-cmd">cargo add tellus</span><button type="button" id="copy-btn">copy</button></div>
           <a class="btn btn-primary" href="{{ get_url(path="@/docs/tutorials/getting-started/_index.md") }}">Start the tutorial</a>
@@ -91,7 +91,7 @@
         <div>
           <span class="tag">across nodes</span>
           <h3>Same API, two tiers</h3>
-          <p>A real termination keeps the full local contract over the wire. If a node is downed instead, the synthesized signal guarantees that no message from that actor is ever delivered through this endpoint again.</p>
+          <p>A real termination keeps the full local contract over the wire. If the actor's node is downed instead, the synthesized signal guarantees that no message from that actor is delivered on the watcher's node again.</p>
         </div>
         <div>
           <span class="tag">unwatch</span>
@@ -110,6 +110,7 @@
         <h2>Let it crash, then restart it calmly.</h2>
         <p>Actors form a tree. When <code>init</code> or <code>receive</code> returns an error or panics, the actor's supervision strategy decides what happens. <code>Stop</code> terminates the actor. <code>Restart</code> stops its children and runs <code>init</code> again for a fresh state; the actor keeps its address and mailbox.</p>
         <p>Restarts back off exponentially between <code>min</code> and <code>max</code>. More than <code>max_restarts</code> consecutive failures stop the actor, and running for <code>reset_after</code> without failure starts the count afresh. Stopping always goes bottom-up: children first, then the parent.</p>
+        <a class="more" href="{{ get_url(path="@/docs/explanation/supervision-and-lifecycle.md") }}">How actors fail, restart and terminate →</a>
       </div>
       <div>
         <figure class="backoff" style="margin:0">
@@ -152,13 +153,14 @@
       <div class="split">
         <div class="prose">
           <h2>Persist the events, replay the state.</h2>
-          <p>Implement <code>EventSourced</code> instead of <code>Actor</code>. Your handler validates a command against the state and returns an <code>Effect</code> naming the events it causes. tellus appends them to the store, and only then folds them into the state. After a crash, replay rebuilds exactly the same state, optionally shortcut by a snapshot.</p>
+          <p>Implement <code>EventSourced</code> instead of <code>Actor</code>. Your handler validates a command and returns an <code>Effect</code> naming the events it causes. tellus appends them to the store, and only then folds them into the state. After a crash, replay rebuilds exactly the same state, optionally shortcut by a snapshot.</p>
           <p>Conditional appends fence concurrent incarnations, and manifests version your event schemas. A contract test suite checks any store backend. PostgreSQL ships today in <code>tellus-persistence-postgres</code>; an in-memory store and <code>TestContext</code> let you test without a database.</p>
+          <a class="more" href="{{ get_url(path="@/docs/explanation/event-sourcing.md") }}">What tellus guarantees about event sourcing →</a>
         </div>
         {{<code path="tellus/tellus/examples/tutorials/event_sourced/02_supervision.rs" anchor="handle-apply" lang="rust" title="an event-sourced device"/>}}
       </div>
       <ol class="flow">
-        <li><b>handle</b><span>Validates the command against the current state and returns an <code>Effect</code>.</span></li>
+        <li><b>handle</b><span>Validates the command and returns an <code>Effect</code>.</span></li>
         <li><b>append</b><span>tellus appends the events to the <code>EventStore</code>, conditional on the stream's head.</span></li>
         <li><b>apply</b><span>Only durable events are folded into the state, the same way on replay as live.</span></li>
         <li><b>then</b><span>Side effects such as the reply run once the events are durable.</span></li>
@@ -189,9 +191,9 @@
         <div><h3>Address-bound certificates</h3><p>A node is admitted only at an address its certificate covers, so an authenticated node cannot claim another member's address.</p></div>
         <div><h3>Seed discovery</h3><p>Fixed seeds, DNS SRV or A/AAAA records, or Kubernetes pods by label selector.</p></div>
         <div><h3>Gossiped membership</h3><p>The member list is a state-based CRDT, so duplicated, reordered or crossed gossip cannot corrupt it.</p></div>
-        <div><h3>Failure detection and downing</h3><p>Phi accrual detection and a pluggable downing provider; <code>keep_majority</code> by default.</p></div>
+        <div><h3>Failure detection and downing</h3><p>Phi accrual detection and a pluggable downing provider; <code>KeepMajority</code> by default.</p></div>
         <div><h3>Graceful leave</h3><p>A node that stops announces its departure and drains its queues, so the others list it as left without detecting a failure.</p></div>
-        <div><h3>Cluster identity</h3><p>Every cluster has an ID, and every connection names it. A node of another cluster is refused, and a split is reported, never merged silently.</p></div>
+        <div><h3>Cluster identity</h3><p>Every cluster has an ID, and every connection names it. A node of another cluster is refused. Two clusters never merge, and a split into two is reported.</p></div>
         <div><h3>Receptionist and pub-sub</h3><p>Register actors under a key, look them up across the cluster, and publish to every subscriber of a topic.</p></div>
         <div><h3>Observable cluster state</h3><p>A versioned value on every change; <code>tellus-cluster-inspect</code> serves it to you as server-sent events.</p></div>
       </div>
@@ -243,7 +245,7 @@
       <div class="split">
       <div class="prose">
         <h2>Start digging.</h2>
-        <p>Add tellus, Tokio and anyhow to your project, then work through the getting started tutorial. Each step is a complete program and builds on the previous one.</p>
+        <p>Add tellus, Tokio and anyhow to your project, then work through the getting started tutorial. Its last three steps also use thiserror and tracing-subscriber. Each step is a complete program and builds on the previous one.</p>
         {{<code path="snippets/install.sh" lang="sh" title="shell"/>}}
         <a class="btn btn-primary" href="{{ get_url(path="@/docs/tutorials/getting-started/_index.md") }}" style="justify-self:start">Start the tutorial</a>
       </div>
@@ -255,6 +257,7 @@
         <li><b>Asking all devices</b><span>A query actor per request that cannot hang.</span></li>
         <li><b>When devices fail</b><span>Restart with backoff, and stop for good.</span></li>
         <li><b>A device manager</b><span>One more level on top, after the <a href="https://pekko.apache.org/docs/pekko/current/typed/guide/tutorial.html">IoT example</a> of Apache Pekko.</span></li>
+        <li><b>Stale readings</b><span>A timer forgets old readings, and an actor opts into timers by its type.</span></li>
       </ol>
       </div>
     </div>

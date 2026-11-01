@@ -40,8 +40,9 @@ mailboxes.
 
 {{<example path="tellus/examples/work_pulling.rs" anchor="spawn"/>}}
 
-A worker has at most one job in flight, so its mailbox never holds more than one message. A
-bounded mailbox with capacity one is therefore enough, and it never drops a job.
+A worker has at most one job in flight, so its mailbox never holds more than one message, and a
+capacity of one documents that bound. The capacity never drops a job anyway: the jobs arrive as
+replies to the worker's `ReplyTo`, which a full mailbox takes as well.
 
 The same argument bounds the manager's mailbox:
 
@@ -55,14 +56,18 @@ The capacity must not be smaller than that bound. A dropped request takes its `R
 nothing ever answers the worker. With a capacity of one for the manager, a first request can be
 dropped when it arrives while the mailbox still holds another one. The workers whose requests got
 through still process all documents. But a worker whose request was dropped never stops, so the
-manager waits for it forever. Run it with `RUST_LOG=warn`, and the dead letters in the log tell why.
+manager waits for it forever. To see it happen, lower the manager's capacity in the example to one
+and run it with `RUST_LOG=warn`. When a request is dropped, the dead letter in the log tells why.
 
 ## Bound every mailbox
 
-A bounded mailbox is not backpressure. When it is full, `tell` drops the newest message and logs
-it at warn level as a dead letter, with the actor ID and the message type. An `ask` to a full
-mailbox fails with `AskError::MailboxFull`. A terminated signal, a `reply_to` reply and the output
-of a piped future are always delivered, whatever the capacity.
+A bounded mailbox is not backpressure. When it is full, `tell` drops the newest message and logs it
+at warn level as a dead letter, with the actor ID and the message type. An `ask` to a full mailbox
+fails with `AskError::MailboxFull`. A terminated signal, a `reply_to` reply, the output of a piped
+future and the messages a `Host` buffered while passivating an entity are enqueued even when the
+mailbox is full. All but the terminated signal still count against the capacity, so ordinary tells
+are dropped and asks fail until the mailbox has drained back under it. A message forced past the
+capacity this way is still a dead letter if the actor has terminated.
 
 Still, bound every mailbox. An unbounded mailbox hides overload until the process runs out of
 memory. A bounded one caps the memory taken by ordinary messages and reports every dropped message

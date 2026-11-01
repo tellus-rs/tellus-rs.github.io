@@ -29,7 +29,10 @@ split in two:
 
 - `handle` decides. It gets the current state by reference and returns an `Effect`. For `Record`,
   the effect persists a `Recorded` event. For `Read`, it persists nothing, and the reply runs in a
-  continuation, `then`, which receives the state.
+  continuation, `then`, which receives the state. A continuation runs only once the effect's events
+  are durable and applied, and never on replay. That makes it the place for a reply, or for
+  anything else that reaches beyond the actor. For an effect without events, like the one for
+  `Read`, it runs right after `handle`.
 - `apply` changes the state. It folds one event into the state and is the only state transition.
 
 tellus appends the events to the store, and only then applies them. On recovery, it replays the

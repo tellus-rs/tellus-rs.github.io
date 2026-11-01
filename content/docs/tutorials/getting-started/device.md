@@ -5,7 +5,7 @@ weight      = 2
 +++
 
 A device records temperature readings and answers when asked for the last one. In this step you
-write it as an actor with state, and you talk to it in both ways tellus offers: `tell` and `ask`.
+write it as an actor with state, and you talk to it in the two basic ways: `tell` and `ask`.
 
 ## The messages
 
@@ -49,10 +49,11 @@ actor and `terminated` waits for it.
 ## Run it
 
 From this step on, every step is an example in the tellus repository, and the pages show its
-relevant parts. Clone the repository once and run the examples from there:
+relevant parts. Clone the repository once, at the release these pages show, and run the examples
+from there:
 
 ```sh
-git clone https://github.com/tellus-rs/tellus
+git clone --branch {{<tellus_tag/>}} https://github.com/tellus-rs/tellus
 cd tellus
 cargo run --quiet -p tellus --example getting_started_02_device
 ```

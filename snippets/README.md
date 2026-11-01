@@ -1,8 +1,5 @@
 # Landing page snippets
 
-Landing page code which is not in tellus yet. Each snippet except `install.sh` must eventually come
-from code CI compiles, so it cannot drift from the API:
-
-| Snippet                                     | Target source                                                        |
-|---------------------------------------------|----------------------------------------------------------------------|
-| `install.sh`                                | stays here                                                           |
+Landing page code which does not come from tellus. The only snippet is `install.sh`, the `cargo
+add` commands of the "Get started" section, which have no counterpart in tellus. Every other code
+block on the landing page reads its file from the tellus submodule, so it cannot drift from tellus.

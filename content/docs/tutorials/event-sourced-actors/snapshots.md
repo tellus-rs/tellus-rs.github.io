@@ -12,8 +12,8 @@ the latest snapshot and replays only the events after it.
 
 {{<example path="tellus/examples/tutorials/event_sourced/03_snapshots.rs" anchor="readings"/>}}
 
-The state now also counts the readings, so `snapshot` can decide when one is due. It doubles as the
-snapshot type, so it is `Versioned` like an event.
+The state now also counts the readings, so `snapshot` can decide when one is due. The state type,
+`Readings`, doubles as the snapshot type, so it is `Versioned` like an event.
 
 {{<example path="tellus/examples/tutorials/event_sourced/03_snapshots.rs" anchor="apply"/>}}
 
@@ -25,9 +25,9 @@ by a snapshot. The device offers one after every third reading.
 
 On recovery, if there is a snapshot, `init_from_snapshot` turns it into the state, and only the
 events after the snapshot are replayed. Without a snapshot, `init` is the starting point, as
-before. `init` must stay pure, because it is skipped as soon as a snapshot exists. Work
-which touches the world at start, like spawning children, belongs in `recovered`, which runs after
-every recovery.
+before. `init` must stay pure, because it is skipped as soon as a snapshot exists. Work which
+touches the world at start, like spawning children, belongs in `recovered`, which runs after every
+recovery.
 
 A snapshot is never the source of truth; the events are. If a snapshot cannot be saved, or can no
 longer be decoded later, recovery replays more events.
@@ -36,7 +36,10 @@ longer be decoded later, recovery replays more events.
 
 {{<example path="tellus/examples/tutorials/event_sourced/03_snapshots.rs" anchor="main"/>}}
 
-The snapshot store is configured with `with_snapshot_store`. The in-memory store serves both roles.
+The snapshot store is configured with `with_snapshot_store`. The in-memory store serves both
+roles. `main` records seven readings in a first system and stops it. Then it reads the stored
+events and the snapshot straight from the in-memory store. A second system over the same store
+recovers the device and answers with its readings.
 
 ## Run it
 
@@ -53,7 +56,10 @@ Stored events: 7, the snapshot covers the first 6
 After recovery: 7 readings, the last one 22.3
 ```
 
-The second system starts from the snapshot after six readings and replays only the seventh event.
+The device offered a snapshot after the third and after the sixth reading, and the second one
+replaced the first. A snapshot is stored with the sequence number at which replay resumes, here 6,
+since sequence numbers start at 0. So the snapshot covers the first six events. The second system
+starts from it and replays only the seventh event.
 
 ## What you learned
 

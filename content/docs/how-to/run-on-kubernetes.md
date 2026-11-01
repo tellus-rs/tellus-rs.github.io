@@ -29,11 +29,12 @@ The `tellus-bootstrap-k8s` crate finds the peers by listing the pods that match 
 ```sh
 cargo add tellus --features cluster
 cargo add tellus-bootstrap-k8s
-cargo add k8s-openapi --features v1_33
+cargo add k8s-openapi@0.28 --features v1_33
 ```
 
-The last line is not optional: `k8s-openapi` needs the minimum Kubernetes version chosen by a
-feature, and only your binary can choose it.
+The last line is not optional: `k8s-openapi` needs a feature that selects the Kubernetes API
+version, and only your binary can choose it. Its version has to match the one
+`tellus-bootstrap-k8s` depends on, here 0.28, or the build fails.
 
 {{<example path="tellus-bootstrap-k8s/examples/how_to_run_on_kubernetes.rs" anchor="seeds"/>}}
 
@@ -64,18 +65,20 @@ joined. So the node serves a readiness endpoint, which the `readinessProbe` of t
 
 {{<example path="tellus-bootstrap-k8s/examples/how_to_run_on_kubernetes.rs" anchor="readiness"/>}}
 
-The flag starts out false, turns true once `bootstrap` has made the node a member and its
-application is running, and turns false again when the pod is terminated or the node is downed.
-Since `K8sSeeds` sees unready pods too, gating readiness on membership hides no node from its peers.
+The flag starts out false. It turns true once `bootstrap` has made the node a member and its
+application is running, and false again when the pod is terminated or the node is downed. Since
+`K8sSeeds` sees unready pods too, gating readiness on membership hides no node from its peers.
 
 ## Leave when the pod terminates
 
 {{<example path="tellus-bootstrap-k8s/examples/how_to_run_on_kubernetes.rs" anchor="lifecycle"/>}}
 
 Kubernetes stops a pod with SIGTERM and kills it once `terminationGracePeriodSeconds` have passed.
-On SIGTERM, the node reports itself unready and lingers until the readiness probe has failed, so no
-Service sends it new traffic. Then it stops its actor system and leaves the cluster. The other
-nodes list it as left as soon as they receive the departure, without detecting a failure.
+As soon as the deletion starts, Kubernetes marks the pod's endpoints not ready, without waiting for
+the readiness probe. kube-proxy, ingresses and external load balancers still need some time to stop
+routing to the pod. So on SIGTERM, the node reports itself unready and lingers to cover that time,
+still serving. Then it stops its actor system and leaves the cluster. The other nodes list it as
+left as soon as they receive the departure, without detecting a failure.
 
 `leave_on_terminated` waits for the actor system to terminate, without a deadline of its own, and
 then bounds the drain by `EndpointConfig::leave_timeout`. The outer timeout hence covers both. The
@@ -100,12 +103,17 @@ container, and the new process joins as a new node.
 ## Mount a certificate per pod
 
 The certificate has to cover the address the node advertises, either with the pod's IP as an IP
-address SAN or with `tellus://<pod IP>:7878` as a URI SAN. Every pod hence needs a certificate of
-its own, issued once its IP is known. cert-manager's CSI driver issues a certificate per pod, but it
-cannot put the pod's IP into it: it accepts IP addresses only literally and substitutes no pod IP.
-So with this integration, issuing the certificates is a step of your own deployment, e.g. an init
-container that requests the certificate from your certificate authority. The manifest leaves the
-`tls` volume to that step.
+address SAN or with `tellus://<pod IP>:7878` as a URI SAN. It also has to carry the name every node
+validates its peers against, here `tellus` as a DNS name SAN. Every pod hence needs a certificate
+of its own, issued once its IP is known. cert-manager's CSI driver issues a certificate per pod, but
+it cannot put the pod's IP into it: it accepts IP addresses only literally and substitutes no pod
+IP. So with this integration, issuing the certificates is a step of your own deployment, e.g. an
+init container that requests the certificate from your certificate authority.
+
+The manifest leaves the `tls` volume, an `emptyDir`, to that step. The step writes the certificate
+chain, the key and the certificate authority's certificate into it as `tls.crt`, `tls.key` and
+`ca.crt`. So the init container mounts the volume writable, while the node mounts it read-only at
+`/etc/tellus/tls`.
 
 ## Deployment or StatefulSet
 

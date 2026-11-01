@@ -12,9 +12,9 @@ such a reading makes the device fail, and tellus restarts it.
 {{<example path="tellus/examples/tutorials/getting_started/06_supervision.rs" anchor="device"/>}}
 
 The device's `Error` type is now `InvalidReading` instead of `Infallible`, a unit struct deriving
-`thiserror::Error`. For a reading that is
-not a number, `receive` returns `Err(InvalidReading)`. You can also use `?` to escalate a failure
-the same way. A panic in `receive` counts as a failure, too.
+`thiserror::Error`. For a reading that is not a number, `receive` returns `Err(InvalidReading)`.
+You can also use `?` to escalate a failure the same way. A panic in `receive` counts as a failure,
+too.
 
 What happens next is up to the device's supervision strategy.
 
@@ -22,10 +22,11 @@ What happens next is up to the device's supervision strategy.
 
 {{<example path="tellus/examples/tutorials/getting_started/06_supervision.rs" anchor="spawn"/>}}
 
-The group spawns every device with the `Restart` strategy. When a device fails, tellus runs `init`
-again for a fresh state. The device keeps its `ActorRef` and its mailbox, so messages that are
-already queued are still handled after the restart. Only the state is lost: a restarted device has
-no last reading.
+The default strategy is `Stop`: a failing actor stops for good. So the group spawns every device
+with `spawn_with_config` and an `ActorConfig` whose strategy is `Restart`. When a device fails,
+tellus runs `init` again for a fresh state. The device keeps its `ActorRef` and its mailbox, so
+messages that are already queued are still handled after the restart. Only the state is lost: a
+restarted device has no last reading.
 
 Restarts back off exponentially, starting at 250 ms by default. The number of restarts is limited:
 
@@ -39,10 +40,10 @@ devices, it gets `Terminated` and prunes the device, just as for a retired one.
 
 {{<example path="tellus/examples/tutorials/getting_started/06_supervision.rs" anchor="main"/>}}
 
-`main` records readings for four devices, among them an invalid one for `left` and four invalid ones
-for `broken`, retires `right` and asks for the average. The query waits until `broken` has used up
-its restarts and stopped, which takes about two seconds, so `main` asks with a timeout of five
-seconds here.
+`main` records readings for four devices, among them an invalid one for `left` and four invalid
+ones for `broken`, retires `right` and asks for the average. The query waits until `broken` has
+used up its restarts and stopped, which takes about two seconds. So `main` asks with a timeout of
+five seconds here.
 
 ## Run it
 

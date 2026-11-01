@@ -12,5 +12,6 @@ runs in one process. In this tutorial it moves to its own node, and the other no
 it readings, ask it for averages and learn when its node is gone. Every node is a process of its
 own, but each step is still a single program: it starts the other nodes as child processes on
 your machine. You need the `cluster-dev` feature, which adds a transport without certificate
-checks for exactly this kind of local use; a production cluster authenticates its nodes with
-mutual TLS instead, see [Secure with mutual TLS](@/docs/how-to/secure-with-mutual-tls.md).
+checks for exactly this kind of local use. A production cluster authenticates its nodes with
+mutual TLS instead, see [Secure with mutual TLS](@/docs/how-to/secure-with-mutual-tls.md). Besides
+the crates of the getting started tutorial, the programs use serde with its `derive` feature.

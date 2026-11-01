@@ -20,11 +20,12 @@ The examples on this page test the device and the group of the
 
 {{<example path="tellus/tests/how_to_unit_test.rs" anchor="record"/>}}
 
-`test_context.context()` is the `ActorContext` for the call. No actor system runs, and nothing
-needs to be awaited. `receive` returns a `Result` with the `Control` and the next state. `assert_matches!` (imported with `use std::assert_matches;`) checks
-all of it in one assertion and prints the actual value when the check fails. Its bindings do not
-leave the macro, though. When a test goes on with the state, `let ... else` takes the result apart
-instead, as in [Test children and death watch](#test-children-and-death-watch).
+`test_context.context()` is the `ActorContext` for the call. No actor system runs, and nothing needs
+to be awaited. `receive` returns a `Result` with the `Control` and the next state. `assert_matches!`
+checks all of it in one assertion and prints the actual value when the check fails. It needs Rust
+1.96 or later and is imported with `use std::assert_matches;`. Its bindings do not leave the macro,
+though. When a test goes on with the state, `let ... else` takes the result apart instead, as in
+[Test children and death watch](#test-children-and-death-watch).
 
 ## Check what an actor sends
 
@@ -55,8 +56,8 @@ functions too. The examples come from the device of the
 {{<example path="tellus/tests/how_to_unit_test_event_sourced.rs" anchor="decide"/>}}
 
 `Effect` tells which events a command causes, via `events`, and whether it stops the actor, via
-`stop_requested`. `settle` does what tellus does once the events are stored: it applies them to
-the state in order and runs the continuations.
+`stop_requested`. `settle`, imported from `tellus::testing` like `TestContext`, does what tellus
+does once the events are stored: it applies them to the state in order and runs the continuations.
 
 {{<example path="tellus/tests/how_to_unit_test_event_sourced.rs" anchor="reject"/>}}
 

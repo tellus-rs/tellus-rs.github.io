@@ -1,7 +1,7 @@
 +++
 title       = "Membership and downing"
 description = "How tellus nodes agree on who belongs to the cluster, decide that a node is gone, and where that agreement ends."
-weight      = 5
+weight      = 7
 +++
 
 A cluster has no leader that decides who belongs to it. Every node keeps its own list of members,
@@ -51,7 +51,7 @@ operator to resolve. Cluster IDs order by formation time, so the older cluster, 
 smaller ID, is usually the one to keep. First repair what caused the split: discovery has to give
 the younger cluster's nodes the seeds of the older one, and the older one has to be reachable from
 them. Only then stop every node of the younger cluster and start them again. Otherwise they may
-form yet another cluster of their own. Afterwards, check that every node reports the older
+form yet another cluster of their own. Afterward, check that every node reports the older
 cluster's ID in `ClusterState::cluster`.
 
 ## Spreading the membership
@@ -80,7 +80,7 @@ it, and the link lasts until it heals or an operator downs one of its ends; the 
 ## Downing
 
 A node that cannot reach a member cannot tell whether the member has crashed or whether only the
-network between them has failed. So the decision to remove a member is not made by the failure
+network between them has failed. So the decision to down a member is not made by the failure
 detector, but by a downing provider. The default, `KeepMajority`, waits until the unreachable
 members have been unreachable for ten seconds. Then the side of the cluster that sees a strict
 majority of the members downs the others, and every other side downs itself. An even split goes to
@@ -88,8 +88,9 @@ the side holding the member with the lowest address.
 
 So at most one side of a partition survives, but only under a condition: the member lists agreed
 before the partition. Two sides that never told each other about a new member can both count
-themselves the majority. That is why a member holds back joins while any member is unreachable:
-neither side of a partition can grow into a majority by admitting new nodes.
+themselves the majority. That is why a member holds back joins from new addresses while it sees
+an Up member outside its own part of the cluster; a broken link does not count. Neither side of a
+partition can grow into a majority by admitting new nodes.
 
 The rule has consequences that depend on the size of the cluster:
 
@@ -104,7 +105,8 @@ The rule has consequences that depend on the size of the cluster:
 A downed member may still be running: the minority side of a partition keeps working until its own
 deadline passes and it downs itself. Meanwhile the majority has already downed it. Watchers on the
 majority side get a synthesized terminated signal for every actor they watched on the downed
-members, which promises only that no message from those actors will be delivered there again, see
+members. Such a signal promises only that no message from that actor is delivered on the watcher's
+node again, see
 [the death watch ordering guarantee](@/docs/explanation/death-watch-ordering.md#across-nodes).
 
 That promise holds because being downed is final. A downed node never comes back as the same
@@ -126,7 +128,7 @@ terminations. That is the normal case, not a promise. A member may not finish re
 within its leave timeout, or it may down the leaving node meanwhile. It then turns what it has not
 read yet into synthesized signals. The `Departure` the leaving node gets lists the members that did
 not acknowledge the drain. Plain `cluster::leave` does not stop any actor, so whatever still runs on
-the node afterwards is cut off from the cluster.
+the node afterward is cut off from the cluster.
 
 ## What this means for your deployment
 

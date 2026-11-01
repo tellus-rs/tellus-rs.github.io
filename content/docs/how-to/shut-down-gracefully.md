@@ -4,11 +4,11 @@ description = "Take a node out of the load balancer's rotation, drain its reques
 weight      = 7
 +++
 
-A node that is stopped should neither fail the requests a load balancer still sends it nor leave
-the other nodes to detect its absence. So on a shutdown signal it reports itself unhealthy, keeps
-serving until the load balancer has taken it out of rotation, drains the requests still in flight,
-and only then stops its actors and leaves the cluster. The examples on this page come from a node
-that serves a health endpoint and an application endpoint backed by an actor.
+A node that is stopped should neither fail the requests a load balancer still sends it nor leave the
+other nodes to detect its absence. So on a shutdown signal it reports itself unhealthy and keeps
+serving until the load balancer has taken it out of rotation. Then it drains the requests still in
+flight, and only then stops its actors and leaves the cluster. The examples on this page come from a
+node that serves a health endpoint and an application endpoint backed by an actor.
 
 ## Serve requests and health
 
@@ -32,9 +32,11 @@ both alike.
 1. The node reports itself unhealthy, so the load balancer starts taking it out of rotation.
 2. It lingers, still serving every request with its actors running. The linger has to exceed the
    time the load balancer needs to drop a node that fails its health check. For a load balancer
-   that checks every two seconds and drops a node after one failure, that is two seconds; a
-   Kubernetes readiness probe with `periodSeconds: 2` and `failureThreshold: 2` takes up to four.
-   The example lingers for five.
+   that checks every two seconds and drops a node after one failure, that is two seconds. On
+   Kubernetes, the readiness probe is not what takes a terminating pod out of rotation: as soon as
+   its deletion starts, Kubernetes marks its endpoints not ready. There the linger covers the time
+   kube-proxy, ingresses and external load balancers need to stop routing to the pod. The example
+   lingers for five.
 3. It tells the HTTP server to shut down gracefully: the server accepts no new connections and
    waits for the requests in flight, bounded by a drain timeout.
 4. It stops its actor system and leaves the cluster. `leave_on_terminated` first waits for the actor
@@ -52,9 +54,9 @@ The HTTP server runs in a task of its own, and the drain signal shuts it down:
 
 Whatever stops the process waits only so long before it kills it: Kubernetes waits
 `terminationGracePeriodSeconds`, thirty by default. That has to cover all four steps: the linger,
-the drain timeout, the termination timeout and the leave timeout, five, five, five and three
-seconds in the example, eighteen in all. A node killed before it is done has not left: the others
-detect its absence and down it, as for a crash.
+the drain timeout, the termination timeout and the leave timeout. In the example, these are five,
+five, five and three seconds, eighteen in all. A node killed before it is done has not left: the
+others detect its absence and down it, as for a crash.
 
 ## Run it
 

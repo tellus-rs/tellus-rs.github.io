@@ -21,22 +21,27 @@ A node's certificate needs two things:
 - The address the node advertises, as a `tellus://<ip:port>` URI SAN. A node is admitted to the
   cluster only at an address its certificate covers, so an authenticated node cannot claim another
   member's address. Without such a URI, the advertised IP has to be among the certificate's IP
-  address SANs, which then covers every port of that IP. That is enough as long as every IP hosts
-  at most one node, as with one pod per IP on Kubernetes.
+  address SANs, which then covers every port of that IP. That is enough as long as every IP hosts at
+  most one node, as with one pod per IP on Kubernetes. A replaced pod gets a new IP and hence needs
+  a new certificate, see
+  [Run on Kubernetes](@/docs/how-to/run-on-kubernetes.md#mount-a-certificate-per-pod).
+
+If a certificate lists extended key usages, it needs both server auth and client auth, since its
+node presents it in both roles.
 
 The example uses rcgen. In production, your certificate authority issues them, e.g. through
-cert-manager, whose `Certificate` resource requests `uris` and `ipAddresses`. SPIRE cannot issue
-either form.
+cert-manager, whose `Certificate` resource requests `uris` and `ipAddresses`. Set its `usages` to
+include both `server auth` and `client auth`. SPIRE cannot issue either form of address.
 
 ## Build the transport in code
 
 {{<example path="tellus/examples/how_to/secure_with_mutual_tls.rs" anchor="first-node"/>}}
 
-`QuicTransport::mutual_tls` takes the node's certificate chain and key, the roots its peers'
-certificates must verify against, and the shared name. The node presents its certificate as both
-server and client, so both sides of every connection are authenticated. A node without a
-certificate from the cluster's authority cannot complete a connection, so it reaches neither the
-protocol nor anybody's failure detection.
+`QuicTransport::mutual_tls` takes the address to bind to, the node's certificate chain and key, the
+roots its peers' certificates must verify against, and the shared name. The node presents its
+certificate as both server and client, so both sides of every connection are authenticated. A node
+without a certificate from the cluster's authority cannot complete a connection, so it reaches
+neither the protocol nor anybody's failure detection.
 
 ## Read the certificates from a config file
 
@@ -44,7 +49,8 @@ With the `serde` feature, `QuicConfig` names the PEM files, so it can come from 
 
 {{<example path="tellus/examples/how_to/secure_with_mutual_tls.rs" anchor="second-node"/>}}
 
-The second node reads a TOML file like this one, which the example writes next to the PEM files:
+The second node reads a TOML file like this one, which the example writes next to the PEM files.
+Only its `[transport]` table is a `QuicConfig`; `seeds` belongs to the example's own configuration:
 
 ```toml
 seeds = ["127.0.0.1:41000", "127.0.0.1:41001"]
