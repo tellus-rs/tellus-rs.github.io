@@ -61,9 +61,9 @@ applied.
 ## Snapshots
 
 Replaying a long history takes time. A snapshot shortens it: `snapshot` can offer one after an
-effect, and recovery then starts from the latest snapshot. Snapshots are never the source of truth.
-A failure to save one is only logged, and a snapshot which can no longer be decoded is discarded
-in favor of a full replay.
+effect with events, and recovery then starts from the latest snapshot. Snapshots are never the
+source of truth. A failure to save one is only logged, and a snapshot which can no longer be
+decoded is discarded in favor of a full replay.
 
 ## Two incarnations of one actor
 
