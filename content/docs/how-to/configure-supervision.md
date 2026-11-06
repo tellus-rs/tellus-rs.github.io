@@ -1,7 +1,7 @@
 +++
 title       = "Configure an actor from a file"
 description = "Load mailbox capacity and supervision from a config file instead of hard-coding them."
-weight      = 3
+weight      = 4
 +++
 
 An `ActorConfig` sets an actor's mailbox capacity and supervision strategy. With the `serde`

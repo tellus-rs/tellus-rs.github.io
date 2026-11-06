@@ -1,7 +1,7 @@
 +++
 title       = "Secure with mutual TLS"
 description = "Authenticate every node with a certificate from the cluster's own certificate authority, bound to its address."
-weight      = 9
+weight      = 10
 +++
 
 The `cluster-dev` transport checks no certificates, so anyone who can reach a node's port can talk

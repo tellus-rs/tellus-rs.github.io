@@ -1,7 +1,7 @@
 +++
 title       = "Observe a cluster"
 description = "Follow the membership as it changes, and serve a node's view of its cluster over HTTP."
-weight      = 8
+weight      = 9
 +++
 
 Every node has its own view of the cluster: the members with their states, the members it cannot

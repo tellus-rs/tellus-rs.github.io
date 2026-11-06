@@ -1,7 +1,7 @@
 +++
 title       = "Run on Kubernetes"
 description = "Run cluster nodes as pods: advertise the pod's address, find the peers by label, report readiness and leave on termination."
-weight      = 6
+weight      = 7
 +++
 
 A node on Kubernetes needs to know its own address, find its peers, prove who it is, tell

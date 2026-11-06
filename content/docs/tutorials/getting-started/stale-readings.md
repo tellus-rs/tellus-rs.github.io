@@ -16,12 +16,13 @@ unchanged.
 {{<example path="tellus/examples/tutorials/getting_started/08_stale_readings.rs" anchor="device"/>}}
 
 The device declares `type Timers = Timed`. This gives its context two more methods, `start_timer`
-and `cancel_timer`. `init` and `receive` always take `ActorContext<Self::Message, Self::Timers>`.
-The earlier steps could write `ActorContext<Self::Message>`, because the context's second type
-parameter defaults to `Untimed`, which is what their actors declare. The device has to name
-`Self::Timers`. Every other actor keeps `Untimed`, and its context has no `start_timer` at all. An
-actor can only start a timer if its type says so, and an untimed actor runs without the
-bookkeeping timers need.
+and `cancel_timer`. `init` and `receive` always take
+`ActorContext<Self::Message, Self::Timers, Self::Stash>`. The earlier steps could write
+`ActorContext<Self::Message>`, because the context's other two type parameters default to `Untimed`
+and `Unstashed`, which is what their actors declare. The device has to name `Self::Timers`, and
+leaves the third parameter at its default, `Unstashed`. Every other actor keeps `Untimed`, and its
+context has no `start_timer` at all. An actor can only start a timer if its type says so, and an
+untimed actor runs without the bookkeeping timers need.
 
 On `Record`, the device calls `start_timer` with a key, a message and a delay. Once `STALE_AFTER`
 has elapsed, the device receives `Expire`, as if it had told itself, and it forgets its reading.

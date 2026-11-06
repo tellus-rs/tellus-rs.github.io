@@ -1,7 +1,7 @@
 +++
 title       = "Apply backpressure"
 description = "Keep a fast producer from overwhelming slow actors with work pulling, and bound mailboxes safely."
-weight      = 4
+weight      = 5
 +++
 
 `tell` never blocks. If a producer sends faster than an actor can handle, the mailbox grows. By

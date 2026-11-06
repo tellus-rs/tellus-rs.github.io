@@ -1,7 +1,7 @@
 +++
 title       = "Batch writes"
 description = "Write buffered entries in batches, without blocking, starting a write once the mailbox has run empty."
-weight      = 5
+weight      = 6
 +++
 
 A write to a database or a file costs a round trip or a system call, whatever its size, so writing

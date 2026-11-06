@@ -40,11 +40,13 @@ Hello, Tellus!
 
 ## What happens here
 
-An actor is a value whose type implements the `Actor` trait. The trait has four associated types:
+An actor is a value whose type implements the `Actor` trait. The trait has five associated types:
 
 - `Message` is the type of the messages the actor receives, here `Greet`.
 - `Timers` says whether the actor can start timers. The greeter needs none, so it is `Untimed`.
   [A later step](@/docs/tutorials/getting-started/stale-readings.md) uses them.
+- `Stash` says whether the actor can defer messages. The greeter defers none, so it is `Unstashed`.
+  [A how-to](@/docs/how-to/defer-messages.md) shows a stash.
 - `State` is the actor's state. The greeter needs none, so it is `()`.
 - `Error` is the type of the actor's failures. The greeter cannot fail, so it is `Infallible`.
 

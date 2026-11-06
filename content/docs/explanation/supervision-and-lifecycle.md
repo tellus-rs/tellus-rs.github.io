@@ -34,7 +34,10 @@ terminates, from the [watching step](@/docs/tutorials/getting-started/watch.md) 
 
 The mailbox survives. Messages which arrived behind the failing message, or arrive during the
 backoff, are handled by the restarted actor. The failing message itself is not delivered again.
-Watches survive, too. Timers do not: a restart cancels all of the actor's timers.
+The stash survives as well: the restarted actor receives every stashed item first, in order, after
+`init`, or after recovery and `recovered` for an event-sourced actor. The stash requests made while
+handling the failing message are discarded with it. Watches survive, too. Timers do not: a restart
+cancels all of the actor's timers.
 
 ## Restarts are limited
 
@@ -63,8 +66,8 @@ runs.
 Termination releases the actor's resources in a fixed order:
 
 1. The state is dropped, so its destructors run.
-2. The mailbox is closed, and the queued messages are dropped. An `ask` among them fails with
-   `AskError::NoReply`.
+2. The mailbox is closed, and the queued messages are dropped, the stashed ones with them. An
+   `ask` among them fails with `AskError::NoReply`.
 3. The children stop, recursively, and the actor waits until all of them have terminated.
 4. The actor value is dropped.
 5. The watchers receive the terminated signal.

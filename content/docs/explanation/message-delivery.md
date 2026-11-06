@@ -18,9 +18,9 @@ fail to deliver a message for two reasons:
 
 In both cases tellus drops the message and logs it at warn level as a dead letter, with the actor
 ID and the message type. A message which was delivered can still go unprocessed: when the actor
-stops before it gets to the message, the message is dropped with the rest of the mailbox. When an
-actor fails while handling a message, that message is consumed and not delivered again, not even
-to the restarted actor.
+stops before it gets to the message, the message is dropped with the rest of the mailbox and the
+stash. When an actor fails while handling a message, that message is consumed and not delivered
+again, not even to the restarted actor.
 
 A full mailbox still takes two kinds of messages the actor asked for itself: the reply to a
 `ReplyTo` it created with `context.reply_to`, and the output of a future it piped with
@@ -54,12 +54,35 @@ missing reply declares `type Timers = Timed`, starts a
 [timer](@/docs/tutorials/getting-started/stale-readings.md) per request and cancels it once the
 reply has arrived.
 
+## Stashing
+
+An actor with `type Stash = Stashed` can defer a message it cannot handle yet: `context.stash`
+keeps it, and `context.unstash_all` hands everything stashed back to the run loop. The stashed
+messages come back in the order they were stashed, ahead of everything in the mailbox, and only a
+stop by the parent comes before them. Among them, the order per sender holds. See
+[Defer messages while an actor waits](@/docs/how-to/defer-messages.md).
+
+The items one `unstash_all` hands back form a drain. An `unstash_all` made during a drain is held
+until the drain is over. It then takes effect at once if the stash has shrunk since the drain began,
+and otherwise once one item from the mailbox has been received. An actor which stashes every item
+again, as a retry loop does, hence waits for its next message instead of draining forever. A drain
+thus cannot starve the mailbox.
+
+The stash has the capacity of the mailbox: unbounded with an unbounded mailbox, `n` with a mailbox
+bounded to `n`. It counts the stashed items, the unstashed ones not received yet and the requests
+made so far. A full stash hands the message back to the actor instead of dropping it. A stashed
+message has left the mailbox and frees its capacity, so a bounded actor holds at most twice its
+capacity in ordinary messages, mailbox and stash together. A stashed message counts whatever its
+origin, so a `reply_to` reply or the output of a piped future, which pass a full mailbox, does not
+pass a full stash.
+
 ## Terminated signals bypass the capacity
 
 A terminated signal, which tells a watcher that a watched actor has terminated, bypasses the
 capacity of a bounded mailbox. A full mailbox never drops it; only `unwatch` or the watcher's own
 termination does. Unlike a `reply_to` reply or the output of a piped future, which pass a full
-mailbox but count against its capacity (see above), a terminated signal does not count at all. It
+mailbox but count against its capacity (see above), a terminated signal does not count at all. The
+same holds for the stash: a terminated signal skips its capacity and does not count. The signal
 also arrives behind every message the terminated actor delivered to the watcher, which is the
 [death watch ordering guarantee](@/docs/explanation/death-watch-ordering.md).
 

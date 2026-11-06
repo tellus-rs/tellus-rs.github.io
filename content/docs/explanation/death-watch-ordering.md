@@ -41,6 +41,10 @@ queue. That is why the guarantee says "seen every message it will ever see" and 
 every message it sent". Messages which a task spawned by the actor sends on its behalf are not
 covered either, because they do not come from the actor itself.
 
+Stashing keeps the guarantee as long as the watcher stashes the signal along with the messages.
+`context.stash` takes the `Incoming` as `receive` got it, so a stashed terminated signal stays
+behind the messages stashed before it. It comes back in that place when the actor unstashes.
+
 ## What you can build on it
 
 **Waiting for answers without timeouts.** An actor that asks several others and waits for their
@@ -60,10 +64,13 @@ child that is no longer in the map.
 
 ## Unwatching
 
-`context.unwatch(&actor)` reverts a watch. Its contract is absolute: after it returns, the watcher
-never receives a terminated signal for that actor. This holds even if the signal is already
-waiting in its mailbox. tellus enforces this on the watcher's side and drops such a signal before
-`receive` sees it. Unwatch as soon as you no longer care, for example once an actor has answered.
+`context.unwatch(&actor)` reverts a watch. After it returns, the watcher never receives a terminated
+signal for that actor. This holds even if the signal is already waiting in its mailbox. tellus
+enforces this on the watcher's side and drops such a signal before `receive` sees it. A signal the
+watcher has stashed is dropped from the stash the same way. The one exception is a signal the
+watcher already holds, typically the one it is handling, and stashes after calling `unwatch`. It
+receives that signal once it unstashes. Unwatch as soon as you no longer care, for example once an
+actor has answered.
 
 ## Across nodes
 
@@ -89,7 +96,7 @@ tellus gives up connecting to an address that no member advertises, and signals 
 there. Neither case marks the watched node down, so a message from the actor may still arrive
 afterward. The API does not tell these signals apart from the others.
 
-Unwatching stays absolute across nodes, and watching stays race-free: watching an actor that has
+Unwatching works the same across nodes, and watching stays race-free: watching an actor that has
 already terminated, or one on a node that is already down, queues the signal at once.
 
 For the implementation, see
