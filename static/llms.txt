@@ -47,6 +47,7 @@ Key facts for writing tellus code:
 - [Unit test an actor](https://tellus.rs/docs/how-to/unit-test/): Test receive, handle and apply as plain functions with TestContext, without an actor system.
 - [Configure an actor from a file](https://tellus.rs/docs/how-to/configure-supervision/): Load mailbox capacity and supervision from a config file instead of hard-coding them.
 - [Apply backpressure](https://tellus.rs/docs/how-to/apply-backpressure/): Keep a fast producer from overwhelming slow actors with work pulling, and bound mailboxes safely.
+- [Passivate idle entities](https://tellus.rs/docs/how-to/passivate-idle-entities/): Spawn one actor per key on its first message with a Host, and stop it again once no message has reached it for a while.
 - [Batch writes](https://tellus.rs/docs/how-to/batch-writes/): Write buffered entries in batches, without blocking, starting a write once the mailbox has run empty.
 - [Run on Kubernetes](https://tellus.rs/docs/how-to/run-on-kubernetes/): Run cluster nodes as pods: advertise the pod's address, find the peers by label, report readiness and leave on termination.
 - [Shut down gracefully](https://tellus.rs/docs/how-to/shut-down-gracefully/): Take a node out of the load balancer's rotation, drain its requests, leave the cluster and exit.
