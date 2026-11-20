@@ -1,7 +1,7 @@
 +++
 title       = "Unit test an actor"
 description = "Test receive, handle and apply as plain functions with TestContext, without an actor system."
-weight      = 3
+weight      = 30
 +++
 
 `receive` is a plain function, so you can call it in a test like any other function: pass a

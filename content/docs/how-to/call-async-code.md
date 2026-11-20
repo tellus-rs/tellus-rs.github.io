@@ -1,7 +1,7 @@
 +++
 title       = "Call async code from an actor"
 description = "Run a database query or an HTTP request for an actor and get the result back as a message."
-weight      = 1
+weight      = 10
 +++
 
 `receive` is a plain function, so an actor cannot await. To use async code, for example a database

@@ -130,6 +130,7 @@ within its leave timeout, or it may down the leaving node meanwhile. It then tur
 read yet into synthesized signals. The `Departure` the leaving node gets lists the members that did
 not acknowledge the drain. Plain `cluster::leave` does not stop any actor, so whatever still runs on
 the node afterward is cut off from the cluster.
+[Remove a member](@/docs/how-to/remove-a-member.md) shows both ways out.
 
 ## What this means for your deployment
 
