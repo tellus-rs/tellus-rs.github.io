@@ -38,7 +38,9 @@ not several. The majority keeps a node that is cut off from the others from form
 its own when it restarts, as long as discovery resolves every node. A fixed list of seeds hence
 names all of them. Both make formation fail closed: while the lowest address does not
 answer, nothing forms. So discovery has to stop resolving nodes that are gone, or a cold start
-never finishes.
+never finishes. Where it cannot,
+[Form without the lowest seed](@/docs/how-to/form-without-the-lowest-seed.md) shows the opt-in
+fallback and its price.
 
 ## One cluster, one identity
 
