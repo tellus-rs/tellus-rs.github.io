@@ -100,3 +100,4 @@ independent of the Rust type, and a schema version, both from `Versioned`. When 
 its version increases, and `Versioned::decode` can convert old versions while reading. The stored
 events themselves are never rewritten. An event with a version which the code no longer decodes
 fails the recovery.
+[Evolve events](@/docs/how-to/evolve-events.md) shows an upcast.
