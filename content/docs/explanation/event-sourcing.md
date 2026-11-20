@@ -60,7 +60,8 @@ anyway. A lossy round trip, such as `Some(None)` or a `#[serde(skip)]` field, ma
 without any error. An append which failed but reached the store adds events which the live actor
 never applied. Replay also requires `apply` to be pure: no I/O, no clock, no randomness, and no
 failure. Anything which touches the world at start, such as spawning children, belongs in
-`recovered`.
+`recovered`. [Persist child actors](@/docs/how-to/persist-child-actors.md) starts a timer
+again there.
 
 A restart under supervision is a recovery too. That also resolves an uncertain append: if the
 events reached the store before the replay reads the stream, replay applies them, and if not, they

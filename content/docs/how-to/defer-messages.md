@@ -1,7 +1,7 @@
 +++
 title       = "Defer messages while an actor waits"
 description = "Stash the requests which arrive while an actor waits for a piped future, and answer them in order once it has what it needs."
-weight      = 2
+weight      = 20
 +++
 
 `receive` is a plain function, so an actor [pipes async code to itself](@/docs/how-to/call-async-code.md)
