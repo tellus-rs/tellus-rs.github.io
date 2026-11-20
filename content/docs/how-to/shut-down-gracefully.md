@@ -58,6 +58,7 @@ Whatever stops the process waits only so long before it kills it: Kubernetes wai
 the drain timeout, the termination timeout and the leave timeout. In the example, these are five,
 five, five and three seconds, eighteen in all. A node killed before it is done has not left: the
 others detect its absence and down it, as for a crash.
+[Remove a member](@/docs/how-to/remove-a-member.md) shows leaving and downing side by side.
 
 ## Run it
 
