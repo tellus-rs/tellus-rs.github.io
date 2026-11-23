@@ -56,9 +56,10 @@ stops. With `Restart` it starts over with an empty buffer. The failure comes wit
 the only write in flight, so a restarted journal never receives a stale `Written`.
 
 The entries still in the buffer are lost when the journal fails, in line with the at-most-once
-delivery of tellus. Retrying a batch instead needs a backoff between attempts, which is a recipe of
-its own. A write which never completes leaves the journal waiting forever. Only a timeout around
-`write` covers that, and database clients usually have timeouts of their own.
+delivery of tellus. Retrying a batch instead needs a backoff between attempts, which is the recipe
+of [Retry failed writes](@/docs/how-to/retry-writes.md). A write which never completes leaves the
+journal waiting forever. Only a timeout around `write` covers that, and database clients usually
+have timeouts of their own.
 
 ## Stopping
 

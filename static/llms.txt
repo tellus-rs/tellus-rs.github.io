@@ -49,6 +49,7 @@ Key facts for writing tellus code:
 - [Passivate idle entities](https://tellus.rs/docs/how-to/passivate-idle-entities/): Spawn one actor per key on its first message with a Host, and stop it again once no message has been routed to it for a while.
 - [Configure an actor from a file](https://tellus.rs/docs/how-to/configure-supervision/): Load mailbox capacity and supervision from a config file instead of hard-coding them.
 - [Batch writes](https://tellus.rs/docs/how-to/batch-writes/): Write buffered entries in batches, without blocking, starting a write once the mailbox has run empty.
+- [Retry failed writes](https://tellus.rs/docs/how-to/retry-writes/): Retry a failed batch with backoff, resend what was never acknowledged, and keep every entry in the store exactly once with keyed writes.
 - [Persist child actors](https://tellus.rs/docs/how-to/persist-child-actors/): Spawn event-sourced children from a plain actor, persist a batch of events atomically and restart a timer after recovery.
 - [Evolve events](https://tellus.rs/docs/how-to/evolve-events/): Change the shape of a stored event and let the new release read the old events by upcasting them while it replays.
 - [Hand over a reference](https://tellus.rs/docs/how-to/hand-over-a-reference/): Pass an actor reference to another node out of band, as bytes on its command line, and use it once that node has joined.
